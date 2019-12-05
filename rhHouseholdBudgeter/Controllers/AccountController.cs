@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
+using System.Web.Security;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using rhBugTracker.Helpers;
+using rhHouseholdBudgeter.Helpers;
 using rhHouseholdBudgeter.Models;
 
 namespace rhHouseholdBudgeter.Controllers
@@ -21,6 +22,9 @@ namespace rhHouseholdBudgeter.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRoleHelper roleHelper = new UserRoleHelper();
+        
 
         public AccountController()
         {
@@ -187,8 +191,10 @@ namespace rhHouseholdBudgeter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> NewRegister(RegisterViewModel model, HttpPostedFileBase AvatarImage)
         {
+            
             if (ModelState.IsValid)
             {
+                //registering the user with inputs 
                 var user = new ApplicationUser
                 {
 
@@ -200,6 +206,7 @@ namespace rhHouseholdBudgeter.Controllers
                     AvatarPath = ""
                 };
 
+                //validating the image that they chose as avatar
                 if (AvatarImage != null)
                 {
                     if (ImageUploadValidator.IsWebFriendlyImage(AvatarImage))
@@ -209,16 +216,15 @@ namespace rhHouseholdBudgeter.Controllers
                         justFileName = StringUtilities.URLFriendly(justFileName);
                         fileName = $"{justFileName}_{DateTime.Now.Ticks}{Path.GetExtension(fileName)}";
 
-                        AvatarImage.SaveAs(Path.Combine(Server.MapPath("~/Avatar/"), fileName));
-                        user.AvatarPath = "/Avatar/" + fileName;
+                        AvatarImage.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), fileName));
+                        user.AvatarPath = "/Avatars/" + fileName;
                     }
                 }
-
-
+                
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);                   
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -226,6 +232,10 @@ namespace rhHouseholdBudgeter.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
+                    //Assign to guest role by defualt
+                    await UserManager.AddToRoleAsync(user.Id, "Guest");
+
+                    //send confirmation email 
                     try
                     {
                         var from = $"Financial Admin<{WebConfigurationManager.AppSettings["emailto"]}>";
@@ -509,6 +519,70 @@ namespace rhHouseholdBudgeter.Controllers
         {
             return View();
         }
+
+        //GET
+        public ActionResult AcceptInvitation(string recipientEmail, string code)
+        {
+            var realGuid = Guid.Parse(code);
+            var invitation = db.Invitations.FirstOrDefault(i => i.RecipientEmail == recipientEmail && i.Code == realGuid);
+
+            if (invitation == null)
+                return View("NotFoundError", invitation);
+
+            var expirationDate = invitation.Created.AddDays(invitation.TTL);
+            if (invitation.IsValid && DateTime.Now < expirationDate)
+            {
+                var houseHoldName = db.Households.Find(invitation.HouseholdId).Name;
+                ViewBag.Greeting = $"<center> Thank You for accepting my invitation to join {houseHoldName}.</center></br>Thanks";
+
+                var invitationVm = new AcceptInvitationViewModel
+                {
+                    Id = invitation.Id,
+                    Email = recipientEmail,
+                    Code = realGuid,
+                    HouseholdId = invitation.HouseholdId
+                };
+
+                return View(invitationVm);
+            }
+            return View("AcceptError", invitation);
+
+        }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AcceptInvitation(AcceptInvitationViewModel invitationvm)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    FirstName = invitationvm.Fname,
+                    LastName = invitationvm.Lname,
+                    DisplayName = invitationvm.DisplayName,
+                    UserName = invitationvm.Email,
+                    Email = invitationvm.Email,
+                    AvatarPath = "/Avatars/profile_Placeholder.png",
+                    HouseholdId = invitationvm.HouseholdId
+                };
+
+                var result = await UserManager.CreateAsync(user, invitationvm.Password);
+                if (result.Succeeded)
+                {
+                    InvitationExtension.MarkAsInvalid(invitationvm.Id);
+                    roleHelper.AddUserToRole(user.Id, "HouseholdMember");
+
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    return RedirectToAction("Index", "Home");
+                    
+                }
+                AddErrors(result);
+            }
+            return View(invitationvm);
+        }
+
 
         protected override void Dispose(bool disposing)
         {

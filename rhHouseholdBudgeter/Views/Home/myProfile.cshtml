@@ -1,0 +1,130 @@
+﻿@model rhHouseholdBudgeter.Models.UserInformationViewModel
+@using Microsoft.AspNet.Identity
+@using rhHouseholdBudgeter.Models
+
+@{
+    var db = new ApplicationDbContext();
+    var userid = User.Identity.GetUserId();
+    var user = db.Users.Find(userid);
+    ViewBag.Title = "myProfile";
+
+}
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card card-user">
+                <div class="image">
+                    @if (user.AvatarPath == null)
+                    {
+                        <img src="~/Images/profile_Placeholder.png" alt="image">
+                    }
+                    else
+                    {
+                        <img src=@user.AvatarPath alt="image">
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="author">
+                        <a href="#">
+                            @if (user.AvatarPath == null)
+                            {
+                                <img src="~/Avatar/profile_Placeholder.png" alt="image">
+                            }
+                            else
+                            {
+                                <img class="avatar border-gray" src=@user.AvatarPath alt="image">
+                            }
+                            <h5 class="title">@user.FirstName @user.LastName</h5>
+                        </a>
+                    </div>
+                    <p class="description text-center">
+                        @Model.Role
+                    </p>
+                </div>
+            </div>
+            <!--START HOUSEHOLD PEOPLE-->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Household Members</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled team-members">
+                        <li>
+                            <div class="row">
+                                <div class="col-md-2 col-2">
+                                    <div class="avatar">
+                                        <!--ADd image for person here-->
+                                    </div>
+                                </div>
+                                <div class="col-md-7 col-7">
+                                    person
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <!--END TEAM MEMBERS-->
+        </div>
+        <!--USER INFORMATION HERE-->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="title">Profile Information</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+
+                        <div class="row">
+                            <!--Household name-->
+                            <div class="col-md-5 pr-1">
+                                <div class="form-group">
+                                    <label>Household Name</label>
+                                    @*<input type="text" class="form-control" disabled="" placeholder="Company" value="Creative Code Inc.">*@
+
+                                </div>
+                            </div>
+                            <!--Displayname-->
+                            <div class="col-md-3 px-1">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    @*<input type="text" class="form-control" placeholder="Username" value="michael23">*@
+                                    @Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control", @disabled = true })
+                                </div>
+                            </div>
+                            <!--Email-->
+                            <div class="col-md-4 pl-1">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Email address</label>
+                                    @*<input type="email" class="form-control" placeholder="Email">*@
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @disabled = true })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!--First Name-->
+                            <div class="col-md-6 pr-1">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    @*<input type="text" class="form-control" placeholder="Company" value="Chet">*@
+                                    @Html.TextBoxFor(m => m.Fname, new { @class = "form-control", @disabled = true })
+                                </div>
+                            </div>
+                            <!--Last Name-->
+                            <div class="col-md-6 pl-1">
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    @*<input type="text" class="form-control" placeholder="Last Name" value="Faker">*@
+                                    @Html.TextBoxFor(m => m.Lname, new { @class = "form-control", @disabled = true })
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

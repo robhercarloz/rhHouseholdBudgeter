@@ -7,7 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Configuration;
 
-namespace rhBugTracker.Helpers
+namespace rhHouseholdBudgeter.Helpers
 {
     public class ImageUploadValidator
     {

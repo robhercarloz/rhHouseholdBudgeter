@@ -4,15 +4,22 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using rhHouseholdBudgeter.Models;
+using rhHouseholdBudgeter.Helpers;
+
 
 namespace rhHouseholdBudgeter.Controllers
 {
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRoleHelper roleHelper = new UserRoleHelper();
+
+
 
         // GET: Households
         public ActionResult Index()
@@ -50,6 +57,8 @@ namespace rhHouseholdBudgeter.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                household.Created = DateTime.Now;                
                 db.Households.Add(household);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -113,6 +122,86 @@ namespace rhHouseholdBudgeter.Controllers
             db.Households.Remove(household);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        //Get 
+        public ActionResult AppointSuccessor()
+        {
+            var userId = User.Identity.GetUserId();
+            var myHouseholdId = db.Users.Find(userId).HouseholdId ?? 0;
+
+            if (myHouseholdId == 0)
+                return RedirectToAction("Index");
+
+            var members = db.Users.Where(u => u.HouseholdId == myHouseholdId && u.Id != userId);
+            ViewBag.NewHOh = new SelectList(members, "Id", "FullName");
+
+            return View();
+        }
+
+        //Post
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AppointSuccessorAsync(string newHOh)
+        {
+            if (string.IsNullOrEmpty(newHOh))
+                return RedirectToAction("Index", "Home");
+
+            var me = db.Users.Find(User.Identity.GetUserId());
+            me.HouseholdId = null;
+            db.SaveChanges();
+
+            roleHelper.RemoveUserFromRole(me.Id, "HouseholdOwner");
+            await ControllerContext.HttpContext.RefreshAuthentication(me);
+
+            roleHelper.RemoveUserFromRole(newHOh, "HouseholdMember");
+            roleHelper.AddUserToRole(newHOh, "HouseholdOwner");
+
+            //Add a new notification record
+            UserRoleHelper.SendNewRoleNotification(newHOh, "HouseholdOwner");
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        public async Task<ActionResult> LeaveAsync()
+        {
+            //get user
+            var userId = User.Identity.GetUserId();
+            //Determine the role 
+            var myRole = roleHelper.ListUserRole(userId).FirstOrDefault();
+            var user = db.Users.Find(userId);
+
+            switch (myRole)
+            {
+                case "HouseholdOwner":
+                    var inhabitants = db.Users.Where(u => u.HouseholdId == user.HouseholdId).Count();
+                    if (inhabitants > 1)
+                    {
+                        TempData["Message"] = $"You are unable to leave the Household at this time as there are still <b>{inhabitants}<b>";
+                        return RedirectToAction("ExitDenied");
+                    }
+
+                    user.HouseholdId = null;
+                    db.SaveChanges();
+
+                    roleHelper.RemoveUserFromRole(userId, "HouseholdOwner");
+                    await ControllerContext.HttpContext.RefreshAuthentication(user);
+
+                    return RedirectToAction("Index", "Home");
+
+                case "HouseholdMember":
+                default:
+                    user.HouseholdId = null;
+                    db.SaveChanges();
+
+                    roleHelper.RemoveUserFromRole(userId, "HouseholdMember");
+                    await ControllerContext.HttpContext.RefreshAuthentication(user);
+
+                    return RedirectToAction("Index", "Home");
+
+            }
+
         }
 
         protected override void Dispose(bool disposing)

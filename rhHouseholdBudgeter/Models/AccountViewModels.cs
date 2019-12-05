@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace rhHouseholdBudgeter.Models
@@ -114,6 +115,26 @@ namespace rhHouseholdBudgeter.Models
         public string Code { get; set; }
     }
 
+    public class ExtendedRegisterViewModel
+    {
+        public string Fname { get; set; }
+        public string Lname { get; set; }
+        public string DisplayName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+    
+    }
+
+    public class AcceptInvitationViewModel : ExtendedRegisterViewModel
+    {
+        public int Id { get; set; }
+        public Guid Code { get; set; }
+        public int HouseholdId { get; set; }
+
+    }
+
+
     public class ForgotPasswordViewModel
     {
         [Required]
@@ -121,4 +142,8 @@ namespace rhHouseholdBudgeter.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
+
+
+
+
 }

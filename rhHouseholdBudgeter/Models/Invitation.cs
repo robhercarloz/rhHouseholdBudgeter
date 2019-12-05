@@ -13,7 +13,7 @@ namespace rhHouseholdBudgeter.Models
         public DateTime Created { get; set; }
         public int TTL { get; set; }
         public string RecipientEmail { get; set; }
-        public string Code { get; set; }
+        public Guid Code { get; set; }
         //KEY
         public virtual Household Household { get; set; }
     }
