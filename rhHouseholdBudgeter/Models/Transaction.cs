@@ -22,5 +22,8 @@ namespace rhHouseholdBudgeter.Models
         public virtual TransactionType TransactionType { get; set; }
         public virtual BankAccount BankAccount { get; set; }
         public virtual BudgetItem BudgetItem { get; set; }
+
+
+
     }
 }

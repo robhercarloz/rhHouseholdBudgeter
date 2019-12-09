@@ -9,8 +9,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    @Html.HiddenFor(model => model.HouseholdId)
-
+    @Html.Hidden("HouseholdId")
 
     <div class="form-horizontal">
         <h4>Invitation</h4>
@@ -20,7 +19,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.RecipientEmail, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.RecipientEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextAreaFor(model => model.RecipientEmail, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.RecipientEmail, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -28,7 +27,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TTL, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TTL, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextBox("TTL", "7", new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.TTL, "", new { @class = "text-danger" })
             </div>
         </div>        

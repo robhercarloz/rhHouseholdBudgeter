@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using rhHouseholdBudgeter.Enum;
 
 namespace rhHouseholdBudgeter.Helpers
 {
@@ -14,7 +15,7 @@ namespace rhHouseholdBudgeter.Helpers
         private UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>
             (new UserStore<ApplicationUser>(new ApplicationDbContext()));
 
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private static ApplicationDbContext db = new ApplicationDbContext();
 
 
         //list user role
@@ -35,21 +36,58 @@ namespace rhHouseholdBudgeter.Helpers
             return result.Succeeded;
         }
 
-        public static List<Notification> SendNewRoleNotification (string user, string UserRole)
+        public void notifyNewHead(string user, string role)
         {
             var notification = new Notification
             {
                 Created = DateTime.Now,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
-                IsRead = false,
-                Body = $"You have been assigned to a new role"
+                Body = $"You are now the {role}, Good Luck!",
+                RecipientId = user                
             };
+            
+            //send the email
+            db.Notifications.Add(notification);
+            db.SaveChanges();
+            
 
+        }
+
+        
+
+        //bankstuff
+        public void ManageNotifications(BankAccount newAccount)
+        {
+            //This is checking current balance
+            var lowAlert = newAccount.CurrentBalance < newAccount.lowLevelBalance;
+            var negativeAlert = newAccount.CurrentBalance < 0.00; 
+            //var ticketHasBeenReassigned = oldTicket.AssignedToUserId != null && newTicket.AssignedToUserId == null;
+            if (lowAlert)
+            {
+                LowLevelAlert(newAccount);
+            }
+            else if (negativeAlert)
+            {
+                NegativeAlert(newAccount);
+            }
+            
+        }
+        
+        private void LowLevelAlert (BankAccount newAccount)
+        {
+            
+           
+          
+                
 
             
 
         }
 
+        private void NegativeAlert(BankAccount newAccount)
+        {
+
+        }
         
 
     }

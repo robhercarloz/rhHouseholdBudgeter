@@ -177,6 +177,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
+    <Compile Include="Enum\AccountType.cs" />
     <Compile Include="Enum\TransactionType.cs" />
     <Compile Include="Extensions\InvitationExtension.cs" />
     <Compile Include="Global.asax.cs">

@@ -5,10 +5,9 @@ using System.Web;
 
 namespace rhHouseholdBudgeter.Enum
 {
-    public enum TransactionType
+    public enum AccountType
     {
-        Withdrawal,
-        Deposit
+        Checkings,
+        Savings
     }
-
 }

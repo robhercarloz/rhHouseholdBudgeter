@@ -40,20 +40,19 @@ namespace rhHouseholdBudgeter.Controllers
         }
 
         // GET: Invitations/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
             //get the house id of the user
-            var houseId = db.Users.Find(User.Identity.GetUserId()).HouseholdId ?? 0;
+            var houseId = id;
             //if user house id == 0 then just return to home
             if (houseId == 0)
                 return RedirectToAction("Login", "Account");
 
-            var invitation = new Invitation
-            {
-                HouseholdId = houseId,
-                TTL = 7
-            };
-            return View(invitation);
+            ViewBag.HouseholdId = id;
+            ViewBag.TTL = 7;
+
+
+            return View();
             
         }
 
@@ -64,7 +63,7 @@ namespace rhHouseholdBudgeter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "HouseholdId,TTL,RecipientEmail")] Invitation invitation)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && invitation.TTL > 0)
             {
                 invitation.Created = DateTime.Now;
                 invitation.Code = Guid.NewGuid();
@@ -75,8 +74,8 @@ namespace rhHouseholdBudgeter.Controllers
                 db.SaveChanges();
 
                 await invitation.EmailInvitation();
-
                 return RedirectToAction("Index", "Home");
+
             }
 
             //ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name", invitation.HouseholdId);

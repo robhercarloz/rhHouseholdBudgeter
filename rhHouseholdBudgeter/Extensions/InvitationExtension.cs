@@ -21,7 +21,7 @@ namespace rhHouseholdBudgeter.Helpers
 
             var Url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             var callbackUrl = Url.Action("AcceptInvitation", "Account", new { recipientEmail = invitation.RecipientEmail, code = invitation.Code }, protocol: HttpContext.Current.Request.Url.Scheme);
-            var from = $"RH Financial Portal <{WebConfigurationManager.AppSettings["emailfrom"]}>";
+            var from = $"RH Financial Portal<{WebConfigurationManager.AppSettings["emailfrom"]}>";
 
             var emailMessage = new MailMessage(from, invitation.RecipientEmail)
             {

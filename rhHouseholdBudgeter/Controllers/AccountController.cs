@@ -194,6 +194,7 @@ namespace rhHouseholdBudgeter.Controllers
             
             if (ModelState.IsValid)
             {
+                
                 //registering the user with inputs 
                 var user = new ApplicationUser
                 {
@@ -220,10 +221,14 @@ namespace rhHouseholdBudgeter.Controllers
                         user.AvatarPath = "/Avatars/" + fileName;
                     }
                 }
-                
+                         
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    //Assign to guest role by 
+                    await UserManager.AddToRoleAsync(user.Id, "Guest");
+                    //roleHelper.AddUserToRole(user.Id, "Guest");
+
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);                   
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
@@ -231,9 +236,6 @@ namespace rhHouseholdBudgeter.Controllers
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    //Assign to guest role by defualt
-                    await UserManager.AddToRoleAsync(user.Id, "Guest");
 
                     //send confirmation email 
                     try
@@ -259,7 +261,7 @@ namespace rhHouseholdBudgeter.Controllers
                 AddErrors(result);
             }
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return RedirectToAction("Register");
         }
 
         //

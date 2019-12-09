@@ -53,15 +53,32 @@ namespace rhHouseholdBudgeter.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Greeting,Created")] Household household)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Greeting,Created")] Household household)
         {
             if (ModelState.IsValid)
             {
 
+                var userId = User.Identity.GetUserId();
+                var user = db.Users.Find(userId);
+                //unassign
+                foreach(var userRole in roleHelper.ListUserRole(userId))
+                {
+                    roleHelper.RemoveUserFromRole(userId, userRole);
+                }
+                //assign
+                roleHelper.AddUserToRole(userId, "HouseholdOwner");
+                
+
                 household.Created = DateTime.Now;                
                 db.Households.Add(household);
+                //gives new household ID 
+                user.HouseholdId = household.Id;                
+
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                //log out and back in to update
+                await HttpContext.RefreshAuthentication(user);
+
+                return RedirectToAction("Index", "Home");
             }
 
             return View(household);
@@ -158,12 +175,13 @@ namespace rhHouseholdBudgeter.Controllers
             roleHelper.AddUserToRole(newHOh, "HouseholdOwner");
 
             //Add a new notification record
-            UserRoleHelper.SendNewRoleNotification(newHOh, "HouseholdOwner");
+            roleHelper.notifyNewHead(newHOh, "HouseOwner");
+
 
             return RedirectToAction("Index", "Home");
         }
 
-
+        //GET
         public async Task<ActionResult> LeaveAsync()
         {
             //get user
@@ -187,6 +205,7 @@ namespace rhHouseholdBudgeter.Controllers
 
                     roleHelper.RemoveUserFromRole(userId, "HouseholdOwner");
                     await ControllerContext.HttpContext.RefreshAuthentication(user);
+                    roleHelper.AddUserToRole(userId, "Guest");
 
                     return RedirectToAction("Index", "Home");
 
@@ -197,9 +216,9 @@ namespace rhHouseholdBudgeter.Controllers
 
                     roleHelper.RemoveUserFromRole(userId, "HouseholdMember");
                     await ControllerContext.HttpContext.RefreshAuthentication(user);
+                    roleHelper.AddUserToRole(userId, "Guest");
 
                     return RedirectToAction("Index", "Home");
-
             }
 
         }
