@@ -1,9 +1,69 @@
-﻿@{
+﻿@using rhHouseholdBudgeter.Helpers;
+@using rhHouseholdBudgeter.Models;
+@using Microsoft.AspNet.Identity;
+
+
+@{
     ViewBag.Title = "Home Page";
+    var db = new ApplicationDbContext();
+    var roleHelper = new UserRoleHelper();
+
+    var userId = User.Identity.GetUserId();
+    var user = db.Users.Find(userId);
+    var houseid = user.HouseholdId;
+
+
 }
 
-<div class="content">
+
+    <div class="content">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Users in House</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position</th>
+
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position</th>
+
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @foreach (var users in roleHelper.ListUsersOnHouse(houseid))
+                                {
+                                    <tr>
+                                        <td>@users.FirstName</td>
+                                        <td>@roleHelper.ListUserRole(users.Id).FirstOrDefault()</td>
+                                    </tr>
+                                
+                                }
 
 
 
-</div>
+                                </tbody>
+                            </table>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>

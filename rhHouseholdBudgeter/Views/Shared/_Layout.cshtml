@@ -61,14 +61,7 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="logo">
                 <a href="#" class="simple-text logo-mini">
                     <div class="logo-image-small">
-                        @if (user.AvatarPath == null)
-                        {
-                            <img src="~/Avatars/profile_Placeholder.png" alt="image" />
-                        }
-                        else
-                        {
-                            <img src=@user.AvatarPath alt="image" />
-                        }
+                        
                     </div>
                 </a>
                 <a href="" class="simple-text logo-normal">
@@ -79,7 +72,14 @@ The above copyright notice and this permission notice shall be included in all c
                 <!--USER PROFILE-->
                 <div class="user">
                     <div class="photo">
-                        <img src="#" />
+                        @if (user.AvatarPath == null)
+                        {
+                            <img src="~/Avatars/profile_Placeholder.png" alt="image" />
+                        }
+                        else
+                        {
+                            <img src=@user.AvatarPath alt="image" />
+                        }
                     </div>
                     <div class="info">
                         <a data-toggle="collapse" href="#collapseExample" class="collapsed">
@@ -134,7 +134,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </li>
                     }
 
-                    
+
                     @if (User.IsInRole("HouseholdOwner"))
                     {
                         <li>
@@ -144,11 +144,18 @@ The above copyright notice and this permission notice shall be included in all c
                             </a>
                         </li>
                         <li>
+                            <a href="@Url.Action("Create", "BankAccounts", new { id = user.HouseholdId})">
+                                <i class="nc-icon nc-simple-add"></i>
+                                <p>Create Bank Account</p>
+                            </a>
+                        </li>
+                        <li>
                             <a href="@Url.Action("LeaveAsync", "Households")">
                                 <i class="nc-icon nc-simple-delete"></i>
                                 <p>Leave Household</p>
                             </a>
-                        </li>                       
+                        </li>
+
 
                     }
                     @if (User.IsInRole("Guest"))
@@ -280,8 +287,6 @@ The above copyright notice and this permission notice shall be included in all c
         $(document).ready(function () {
             // Javascript method's body can be found in assets/js/demos.js
             demo.initDashboardPageCharts();
-
-
             demo.initVectorMap();
 
         });

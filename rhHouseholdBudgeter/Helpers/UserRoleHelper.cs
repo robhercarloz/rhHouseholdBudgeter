@@ -53,42 +53,21 @@ namespace rhHouseholdBudgeter.Helpers
 
         }
 
-        
-
-        //bankstuff
-        public void ManageNotifications(BankAccount newAccount)
+        public ICollection<ApplicationUser> ListUsersOnHouse(int? houseId)
         {
-            //This is checking current balance
-            var lowAlert = newAccount.CurrentBalance < newAccount.lowLevelBalance;
-            var negativeAlert = newAccount.CurrentBalance < 0.00; 
-            //var ticketHasBeenReassigned = oldTicket.AssignedToUserId != null && newTicket.AssignedToUserId == null;
-            if (lowAlert)
+            //make list 
+            var users = new List<ApplicationUser>();
+            var list = db.Users.Where(u => u.HouseholdId == houseId).ToList();
+            foreach(var user in list)
             {
-                LowLevelAlert(newAccount);
+                users.Add(user);
             }
-            else if (negativeAlert)
-            {
-                NegativeAlert(newAccount);
-            }
+            return (users);
             
-        }
-        
-        private void LowLevelAlert (BankAccount newAccount)
-        {
-            
-           
-          
-                
-
             
 
         }
 
-        private void NegativeAlert(BankAccount newAccount)
-        {
-
-        }
-        
 
     }
 }
