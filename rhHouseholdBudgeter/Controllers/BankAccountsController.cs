@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using rhHouseholdBudgeter.Models;
 
 namespace rhHouseholdBudgeter.Controllers
@@ -40,7 +41,10 @@ namespace rhHouseholdBudgeter.Controllers
         public ActionResult Create()
         {
             ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name");
-            ViewBag.OwnerId = new SelectList(db.Users, "Id", "FirstName"); //<----CHANGED THISS FROM APPLICATION USER
+            ViewBag.OwnerId = new SelectList(db.Users, "Id", "FirstName");
+            ViewBag.AccountType = new SelectList(db.BankAccounts);
+
+
             return View();
         }
 
@@ -49,18 +53,29 @@ namespace rhHouseholdBudgeter.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Created,AccountType,StartingBalance,CurrentBalance,HouseholdId,OwnerId")] BankAccount bankAccount)
+        public ActionResult Create([Bind(Include = "Id,Name,Created,StartingBalance,lowLevelBalance,CurrentBalance,HouseholdId,OwnerId,AccountType")] BankAccount bankAccount)
         {
+
             if (ModelState.IsValid)
             {
+                var userId = User.Identity.GetUserId();
+                var user = db.Users.Find(userId);
+
+                bankAccount.HouseholdId = (int)user.HouseholdId;
+                bankAccount.CurrentBalance = bankAccount.StartingBalance;
+                bankAccount.OwnerId = userId;
+                bankAccount.Created = DateTime.Now;
+
                 db.BankAccounts.Add(bankAccount);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "BankAccounts");
             }
 
             ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name", bankAccount.HouseholdId);
             ViewBag.OwnerId = new SelectList(db.Users, "Id", "FirstName", bankAccount.OwnerId);
+
             return View(bankAccount);
+
         }
 
         // GET: BankAccounts/Edit/5
@@ -85,7 +100,7 @@ namespace rhHouseholdBudgeter.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Created,AccountType,StartingBalance,CurrentBalance,HouseholdId,OwnerId")] BankAccount bankAccount)
+        public ActionResult Edit([Bind(Include = "Id,Name,Created,StartingBalance,lowLevelBalance,CurrentBalance,HouseholdId,OwnerId,AccountType")] BankAccount bankAccount)
         {
             if (ModelState.IsValid)
             {

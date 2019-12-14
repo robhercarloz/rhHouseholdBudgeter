@@ -192,6 +192,7 @@
     <Compile Include="Models\BankAccount.cs" />
     <Compile Include="Models\Budget.cs" />
     <Compile Include="Models\BudgetItem.cs" />
+    <Compile Include="Models\DashboardViewModel.cs" />
     <Compile Include="Models\EmailModel.cs" />
     <Compile Include="Models\Household.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -271,11 +272,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\BankAccounts\Create.cshtml" />
-    <Content Include="Views\BankAccounts\Delete.cshtml" />
-    <Content Include="Views\BankAccounts\Details.cshtml" />
-    <Content Include="Views\BankAccounts\Edit.cshtml" />
-    <Content Include="Views\BankAccounts\Index.cshtml" />
     <Content Include="Views\BudgetItems\Create.cshtml" />
     <Content Include="Views\BudgetItems\Delete.cshtml" />
     <Content Include="Views\BudgetItems\Details.cshtml" />
@@ -322,6 +318,11 @@
     <None Include="packages.config" />
     <Content Include="private.config" />
     <Content Include="Views\Account\AcceptInvitation.cshtml" />
+    <Content Include="Views\BankAccounts\Create.cshtml" />
+    <Content Include="Views\BankAccounts\Delete.cshtml" />
+    <Content Include="Views\BankAccounts\Details.cshtml" />
+    <Content Include="Views\BankAccounts\Edit.cshtml" />
+    <Content Include="Views\BankAccounts\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

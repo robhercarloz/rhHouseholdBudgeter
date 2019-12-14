@@ -240,7 +240,7 @@ namespace rhHouseholdBudgeter.Controllers
                     //send confirmation email 
                     try
                     {
-                        var from = $"Financial Admin<{WebConfigurationManager.AppSettings["emailto"]}>";
+                        var from = $"Financial Admin<{WebConfigurationManager.AppSettings["emailfrom"]}>";
                         var email = new MailMessage(from, model.Email)
                         {
                             Subject = "Confirm your account",

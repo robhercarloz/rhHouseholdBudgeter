@@ -1,4 +1,5 @@
-﻿@using rhHouseholdBudgeter.Helpers;
+﻿
+@using rhHouseholdBudgeter.Helpers;
 @using rhHouseholdBudgeter.Models;
 @using Microsoft.AspNet.Identity;
 
@@ -21,43 +22,73 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Users in House</h4>
-                    </div>
                     <div class="card-body">
-                        <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+
+                        <!--TOP DASH -->
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="col-5 col-md-4">
+                                            <div class="icon-big text-center icon-warning">
+                                                <i class="nc-icon nc-money-coins text-success"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7 col-md-8">
+                                            <div class="numbers">
+                                                <p class="card-category">Checkings</p>
+                                                <p class="card-title">
+                                                    
+                                                <p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer ">
+                                    <hr>
+                                    <div class="stats">
+                                        <i class="fa fa-calendar-o"></i> @Html.ActionLink("Manage Accounts", "Index", "BankAccounts")
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
 
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-
-                                </tr>
-                            </tfoot>
-                            <tbody>
-                                @foreach (var users in roleHelper.ListUsersOnHouse(houseid))
-                                {
+                        <div class="card-header">
+                            <h4 class="card-title">Users in House</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar">
+                                <!--        Here you can write extra buttons/actions for the toolbar              -->
+                            </div>
+                            <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
                                     <tr>
-                                        <td>@users.FirstName</td>
-                                        <td>@roleHelper.ListUserRole(users.Id).FirstOrDefault()</td>
+                                        <th>Name</th>
+                                        <th>Position</th>
+
                                     </tr>
-                                
-                                }
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
 
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    @foreach (var users in roleHelper.ListUsersOnHouse(houseid))
+                                    {
+                                        <tr>
+                                            <td>@users.FirstName</td>
+                                            <td>@roleHelper.ListUserRole(users.Id).FirstOrDefault()</td>
+                                        </tr>
 
-
+                                    }
                                 </tbody>
                             </table>
-                    </div>
+                        </div>
+
+                    </div>                    
                     <!-- end content-->
                 </div>
                 <!--  end card  -->

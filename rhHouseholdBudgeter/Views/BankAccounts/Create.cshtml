@@ -5,29 +5,10 @@
 }
 
 
-<div class="content">
-
-    <h3>Creating Bank Account</h3>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5>
-                        Choose bank account type:
-                    </h5>
-                    
-
-
-                </div>
-            </div>
-        </div>
-    </div>   
-</div>
 
 
 
-@*<div class="content">
-
+    <div class="content">
 
         <h2>Create</h2>
 
@@ -38,6 +19,7 @@
             <div class="form-horizontal">
                 <h4>BankAccount</h4>
                 <hr />
+                <!--NAME OF ACCOUNT-->
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
                     @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -47,31 +29,42 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                @*<div class="form-group">
                     @Html.LabelFor(model => model.Created, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.Created, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Created, "", new { @class = "text-danger" })
                     </div>
-                </div>
+                </div>*@
 
+                <!--CHOOSING ACCOUTN TYPE-->
                 <div class="form-group">
-                    @Html.LabelFor(model => model.AccountType, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <label>Choose the account type: </label>
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.AccountType, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EnumDropDownListFor(model => model.AccountType, htmlAttributes: new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.AccountType, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
+
+                <!--STARTING BALANCE-->
                 <div class="form-group">
-                    @Html.LabelFor(model => model.StartingBalance, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <label>Enter in account starting balance: </label>
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.StartingBalance, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.StartingBalance, "", new { @class = "text-danger" })
                     </div>
                 </div>
-
+                <!--THIS IS THE LOW LEVEL BALANCE-->
                 <div class="form-group">
+                    <label>Enter Low level alert: </label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.lowLevelBalance, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.lowLevelBalance, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                
+                @*<div class="form-group">
                     @Html.LabelFor(model => model.CurrentBalance, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.CurrentBalance, new { htmlAttributes = new { @class = "form-control" } })
@@ -86,14 +79,14 @@
                         @Html.ValidationMessageFor(model => model.HouseholdId, "", new { @class = "text-danger" })
                     </div>
                 </div>
-
                 <div class="form-group">
                     @Html.LabelFor(model => model.OwnerId, "OwnerId", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.DropDownList("OwnerId", null, htmlAttributes: new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.OwnerId, "", new { @class = "text-danger" })
                     </div>
-                </div>
+                </div>*@
+                
 
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
@@ -103,21 +96,13 @@
             </div>
         }
 
-    </div>*@
+        <div>
+            @Html.ActionLink("View Active Accounts", "Index")
+        </div>
 
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
-<script>
-    $(document).ready(function () {
-        // Initialise the wizard
-        demo.initWizard();
-        setTimeout(function () {
-            $('.card.card-wizard').addClass('active');
-        }, 600);
-    });
+    </div>
 
-    
-</script>
+
+

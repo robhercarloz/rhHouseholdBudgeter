@@ -19,9 +19,20 @@ namespace rhHouseholdBudgeter.Controllers
 
         public ActionResult Index()
         {
-            return View();
-        }
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
 
+
+            var dash = new DashboardViewModel();
+
+            dash.FullName = $"{user.FirstName} {user.LastName}";
+            dash.Email = user.Email;
+            dash.DisplayName = user.DisplayName;
+            
+
+
+            return View(dash);
+        }
 
         //GET
         public ActionResult EditProfile(string Id)
