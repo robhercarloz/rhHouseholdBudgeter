@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using rhHouseholdBudgeter.Extensions;
 using rhHouseholdBudgeter.Models;
 
 namespace rhHouseholdBudgeter.Controllers
@@ -39,7 +41,9 @@ namespace rhHouseholdBudgeter.Controllers
         // GET: Transactions/Create
         public ActionResult Create()
         {
-            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name");
+
+            var houseId = db.Users.Find(User.Identity.GetUserId()).HouseholdId ?? 0;
+            ViewBag.BankAccountId = new SelectList(db.BankAccounts.Where(b => b.HouseholdId == houseId), "Id", "Name");
             ViewBag.BudgetItemId = new SelectList(db.BudgetItems, "Id", "BudgetName");
             ViewBag.OwnerId = new SelectList(db.Users, "Id", "FirstName");
             return View();
@@ -50,13 +54,21 @@ namespace rhHouseholdBudgeter.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Created,Amount,Memo,BankAccountId,BudgetItemId,OwnerId,TransactionType")] Transaction transaction)
+        public ActionResult Create([Bind(Include = "Amount,Memo,BankAccountId,BudgetItemId,TransactionType")] Transaction transaction)
         {
             if (ModelState.IsValid)
             {
+
+                transaction.OwnerId = User.Identity.GetUserId();
+                transaction.Created = DateTime.Now;                               
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                //fire off a few transaction extensions that help keep the associated bank and budjet balances up to date
+                transaction.UpdateBalances();
+                transaction.ManageNotifications();
+                
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name", transaction.BankAccountId);

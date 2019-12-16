@@ -180,6 +180,7 @@
     <Compile Include="Enum\AccountType.cs" />
     <Compile Include="Enum\TransactionType.cs" />
     <Compile Include="Extensions\InvitationExtension.cs" />
+    <Compile Include="Extensions\TransactionExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
