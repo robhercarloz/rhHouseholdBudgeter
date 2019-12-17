@@ -52,6 +52,8 @@ namespace rhHouseholdBudgeter.Controllers
         {
             if (ModelState.IsValid)
             {
+
+
                 db.BudgetItems.Add(budgetItem);
                 db.SaveChanges();
                 return RedirectToAction("Index");
