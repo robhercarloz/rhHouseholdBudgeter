@@ -17,7 +17,7 @@ namespace rhHouseholdBudgeter.Models
         public float CurrentAmount { get; set; }
         //KEYS
         public virtual ApplicationUser Owner { get; set; }
-        public virtual Household Household { get; set; }
+        public virtual Household HouseHold { get; set; }
         //CHILDREN
         public virtual ICollection<BudgetItem> BudgetItems { get; set; }
         public Budget()

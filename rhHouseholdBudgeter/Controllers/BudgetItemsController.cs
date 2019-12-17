@@ -53,6 +53,8 @@ namespace rhHouseholdBudgeter.Controllers
             if (ModelState.IsValid)
             {
 
+                budgetItem.BudgetId = budgetItem.BudgetId;
+                budgetItem.Created = DateTime.Now;
 
                 db.BudgetItems.Add(budgetItem);
                 db.SaveChanges();

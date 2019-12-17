@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using rhHouseholdBudgeter.Models;
 
 namespace rhHouseholdBudgeter.Controllers
@@ -17,7 +18,7 @@ namespace rhHouseholdBudgeter.Controllers
         // GET: Budgets
         public ActionResult Index()
         {
-            var budgets = db.Budgets.Include(b => b.Household).Include(b => b.Owner);
+            var budgets = db.Budgets.Include(b => b.HouseHold).Include(b => b.Owner);
             return View(budgets.ToList());
         }
 
@@ -39,7 +40,13 @@ namespace rhHouseholdBudgeter.Controllers
         // GET: Budgets/Create
         public ActionResult Create()
         {
-            ViewBag.HouseHoldId = new SelectList(db.Households, "Id", "Name");
+
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
+
+
+
+            ViewBag.HouseHoldId = user.HouseholdId;
             ViewBag.OwnerId = new SelectList(db.Users, "Id", "FirstName");
             return View();
         }
@@ -49,10 +56,20 @@ namespace rhHouseholdBudgeter.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,HouseHoldId,OwnerId,Created,BudgetName,TargetAmount,CurrentAmount")] Budget budget)
+        public ActionResult Create(Budget budget)
         {
             if (ModelState.IsValid)
             {
+
+                var userId = User.Identity.GetUserId();
+                var user = db.Users.Find(userId);
+                
+                budget.OwnerId = user.Id;
+                budget.CurrentAmount = budget.CurrentAmount;
+                budget.TargetAmount = budget.TargetAmount;
+                
+                budget.Created = DateTime.Now;
+
                 db.Budgets.Add(budget);
                 db.SaveChanges();
                 return RedirectToAction("Index");
