@@ -31,7 +31,7 @@ namespace rhHouseholdBudgeter.Extensions
                 CreateNotification(transaction, "You over drafted your account", body);
             }
 
-            else if (currentBal > 0 && currentBal <= transaction.BankAccount.lowLevelBalance) 
+            else if (currentBal <= transaction.BankAccount.lowLevelBalance) 
             {
                 //SendOverDraftNotification(transaction);
 
@@ -73,13 +73,16 @@ namespace rhHouseholdBudgeter.Extensions
         private static void UpdateBudgetBalance(Transaction transaction)
         {
 
-            if (transaction.TransactionType == TransactionType.Deposit || transaction.BudgetItemId == null)
-                return;
-
-            var budgetId = db.BudgetItems.Find(transaction.BudgetItemId).BudgetId;
-            var budget = db.Budgets.Find(budgetId);
-            budget.CurrentAmount += transaction.Amount;
-            db.SaveChanges();            
+            if (transaction.TransactionType == TransactionType.Deposit || transaction.BudgetItemId == null) 
+            {
+                var budgetId = db.BudgetItems.Find(transaction.BudgetItemId).BudgetId;
+                var budget = db.Budgets.Find(budgetId);
+                budget.CurrentAmount += transaction.Amount;
+                db.SaveChanges();             
+            }
+            
+            return;
+                    
         }
 
         private static void UpdateBudgetItemBalance(Transaction transaction)
