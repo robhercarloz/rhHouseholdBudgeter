@@ -324,6 +324,7 @@
     <Content Include="Views\BankAccounts\Details.cshtml" />
     <Content Include="Views\BankAccounts\Edit.cshtml" />
     <Content Include="Views\BankAccounts\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\rhHousebudgeter - Web Deploy.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

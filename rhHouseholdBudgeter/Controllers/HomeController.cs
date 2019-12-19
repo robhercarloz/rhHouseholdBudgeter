@@ -17,6 +17,7 @@ namespace rhHouseholdBudgeter.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private UserRoleHelper roleHelper = new UserRoleHelper();
 
+        [Authorize]
         public ActionResult Index()
         {
             var userId = User.Identity.GetUserId();
@@ -55,6 +56,7 @@ namespace rhHouseholdBudgeter.Controllers
         }
         //POST
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult EditProfile(UserInformationViewModel model, HttpPostedFileBase avatar)
         {
             var userId = User.Identity.GetUserId();
