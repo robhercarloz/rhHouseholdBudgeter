@@ -13,9 +13,9 @@ namespace rhHouseholdBudgeter.Extensions
 
         public static void UpdateBalances(this Transaction transaction)
         {
-            UpdateBalances(transaction);
-            UpdateBalances(transaction);
-            UpdateBalances(transaction);            
+            UpdateBankBalance(transaction);
+            UpdateBudgetBalance(transaction);
+            UpdateBudgetItemBalance(transaction);            
         }
 
         public static void ManageNotifications(this Transaction transaction)

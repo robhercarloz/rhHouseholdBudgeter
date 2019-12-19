@@ -44,8 +44,6 @@ namespace rhHouseholdBudgeter.Controllers
             var userId = User.Identity.GetUserId();
             var user = db.Users.Find(userId);
 
-
-
             ViewBag.HouseHoldId = user.HouseholdId;
             ViewBag.OwnerId = new SelectList(db.Users, "Id", "FirstName");
             return View();

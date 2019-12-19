@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using rhHouseholdBudgeter.Models;
 
 namespace rhHouseholdBudgeter.Controllers
@@ -39,7 +40,12 @@ namespace rhHouseholdBudgeter.Controllers
         // GET: BudgetItems/Create
         public ActionResult Create()
         {
-            ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "OwnerId");
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
+                        
+            var budget = db.Budgets.Where(b => b.OwnerId == user.Id).ToList();
+
+            ViewBag.BudgetId = new SelectList(budget, "Id", "BudgetName");            
             return View();
         }
 
@@ -53,6 +59,7 @@ namespace rhHouseholdBudgeter.Controllers
             if (ModelState.IsValid)
             {
 
+                budgetItem.BudgetName = budgetItem.BudgetName;
                 budgetItem.BudgetId = budgetItem.BudgetId;
                 budgetItem.Created = DateTime.Now;
 
@@ -60,7 +67,7 @@ namespace rhHouseholdBudgeter.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+                
             ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "OwnerId", budgetItem.BudgetId);
             return View(budgetItem);
         }
