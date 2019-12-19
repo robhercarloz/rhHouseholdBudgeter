@@ -1,4 +1,5 @@
 ﻿using rhHouseholdBudgeter.Enum;
+using rhHouseholdBudgeter.Helpers;
 using rhHouseholdBudgeter.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace rhHouseholdBudgeter.Extensions
     public static class TransactionExtensions
     {
         public static ApplicationDbContext db = new ApplicationDbContext();
+        public static NotificationHelper notificationHelper = new NotificationHelper();
 
         public static void UpdateBalances(this Transaction transaction)
         {
@@ -72,27 +74,32 @@ namespace rhHouseholdBudgeter.Extensions
 
         private static void UpdateBudgetBalance(Transaction transaction)
         {
-
-            if (transaction.TransactionType == TransactionType.Deposit || transaction.BudgetItemId == null) 
+            var budgetItem = db.BudgetItems.Find(transaction.BudgetItemId);
+            var budget = db.Budgets.Find(budgetItem.BudgetId);
+            var targetAmount = db.BudgetItems.Where(bI => bI.Budget == budget).Select(bI => bI.TargetAmount).Sum();
+            if (transaction.TransactionType == TransactionType.Deposit || transaction.BudgetItemId == null)
             {
-                var budgetId = db.BudgetItems.Find(transaction.BudgetItemId).BudgetId;
-                var budget = db.Budgets.Find(budgetId);
-                budget.CurrentAmount += transaction.Amount;
-                db.SaveChanges();             
+                return;
             }
-            
-            return;
-                    
+            budget.CurrentAmount += transaction.Amount;
+            if (budget.CurrentAmount > targetAmount)
+                //notificationHelper.SendOverBudgetNotification(transaction.OwnerId, budget.Name);
+                //THis is where the notification is fired of depending on low or high level alert
+            db.SaveChanges();
+
         }
 
         private static void UpdateBudgetItemBalance(Transaction transaction)
         {
-            if (transaction.TransactionType == TransactionType.Deposit || transaction.BudgetItemId == null)
-                return;
-
             var budgetItem = db.BudgetItems.Find(transaction.BudgetItemId);
+            if (transaction.TransactionType == TransactionType.Deposit || budgetItem == null)
+            {
+                return;
+            }
             budgetItem.CurrentAmount += transaction.Amount;
-            db.SaveChanges();
+            if (budgetItem.CurrentAmount > budgetItem.TargetAmount)
+                //this is where the notificationhelper will fire of to see if the level is high or low
+                db.SaveChanges();
         }
 
 
