@@ -213,7 +213,9 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Images\apple-touch-icon.png" />
     <Content Include="Images\emailKey.png" />
+    <Content Include="Images\favicon-32x32.png" />
     <Content Include="Images\forgotKey.png" />
     <Content Include="Avatars\profile_Placeholder.png" />
     <Content Include="Images\registerLeafBK.jpg" />

@@ -29,8 +29,12 @@ namespace rhHouseholdBudgeter.Extensions
             if (currentBal < 0) 
             {
                 //SendOverDraftNotification(transaction);
+                //var body = $"Your most recent transaction in the amount of {transaction.Amount} has overdrafted account {transaction.BankAccount.Name} leaving you with a currrent balance of {transaction.BankAccount.CurrentBalance}";
+                //CreateNotification(transaction, "You over drafted your account", body);
+                //SendOverDraftNotification(transaction);
                 var body = $"Your most recent transaction in the amount of {transaction.Amount} has overdrafted account {transaction.BankAccount.Name} leaving you with a currrent balance of {transaction.BankAccount.CurrentBalance}";
                 CreateNotification(transaction, "You over drafted your account", body);
+
             }
 
             else if (currentBal <= transaction.BankAccount.lowLevelBalance) 
@@ -74,15 +78,16 @@ namespace rhHouseholdBudgeter.Extensions
 
         private static void UpdateBudgetBalance(Transaction transaction)
         {
+
             var budgetItem = db.BudgetItems.Find(transaction.BudgetItemId);
             var budget = db.Budgets.Find(budgetItem.BudgetId);
-            var targetAmount = db.BudgetItems.Where(bI => bI.Budget == budget).Select(bI => bI.TargetAmount).Sum();
+            var targetamount = db.Budgets.Where(b => b.Id == budget.Id).Select(b => b.TargetAmount).Sum();
             if (transaction.TransactionType == TransactionType.Deposit || transaction.BudgetItemId == null)
             {
                 return;
             }
             budget.CurrentAmount += transaction.Amount;
-            if (budget.CurrentAmount > targetAmount)
+            if (budget.CurrentAmount > targetamount)
                 //notificationHelper.SendOverBudgetNotification(transaction.OwnerId, budget.Name);
                 //THis is where the notification is fired of depending on low or high level alert
             db.SaveChanges();

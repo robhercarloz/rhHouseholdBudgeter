@@ -11,8 +11,8 @@
 <head>
     <meta charset="utf-8" />
     <!--START FAVICON---->
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="shortcut icon" href="~/Images/favicon-32x32.png" type="image/x-icon">
+    <link rel="apple-touch-icon" href="~/Images/apple-touch-icon.png">
     <!---END FAVICON----->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>
@@ -51,8 +51,8 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="wrapper wrapper-full-page ">
-        <div class="full-page section-image" filter-color="black" style="background-image: url('../../Images/waterLeafBK.jpg')">
+    <div>
+        <div class="wrapper wrapper-full-page  full-page section-image" filter-color="black" style="background-image: url('../../Images/waterLeafBK.jpg')">
             <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
             <div class="content">
                 <div class="container">
@@ -111,11 +111,7 @@
                                     <p class="text-muted">
                                         Don't have an account?
                                         @Html.ActionLink("Sign Up", "Register", "Account", null)
-                                    </p>
-                                    <p class="text-muted">
-                                        Login as a demo user?
-                                        @Html.ActionLink("Demo User", "DemoUserAccess", "Account", null)
-                                    </p>
+                                    </p>                                    
                                 </div>
                             </div>
                         }
